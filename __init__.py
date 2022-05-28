@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from pathlib import Path
 
@@ -89,7 +90,7 @@ classes = [
 def register():
     for c in classes:
         bpy.utils.register_class(c)
-    bpy.types.Scene.file = bpy.props.StringProperty()
+    bpy.types.Scene.file = bpy.props.StringProperty(default=os.getenv("WATCH_FILE", ""))
 
 
 def unregister():
