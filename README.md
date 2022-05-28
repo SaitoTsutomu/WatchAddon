@@ -1,16 +1,16 @@
-## Blender Add-on: WatchFile
+## Blender Add-on: WatchAddon
 
-Execute a file when modified.
+Re-activate addon when a file is modified.
 
 ## Installation
 
-- Download https://github.com/SaitoTsutomu/WatchFile/archive/refs/heads/main.zip
+- Download https://github.com/SaitoTsutomu/WatchAddon/archive/refs/heads/main.zip
 - Start Blender.
 - Edit menu -> Preferences
   - Select the "Add-ons" tab.
   - Press the "Install ...".
   - Select the downloaded ZIP file and press the button "Install Add-on".
-  - Check the "Object: WatchFile".
+  - Check the "Object: WatchAddon".
 
 ## Usage
 
