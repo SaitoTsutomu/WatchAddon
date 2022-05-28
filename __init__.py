@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from pathlib import Path
+from subprocess import run
 
 import bpy
 
@@ -31,7 +32,8 @@ class CWF_OT_watch_addon(bpy.types.Operator):
     def off_on_addon(self):
         if (t := self._path.stat().st_mtime) > self._last:
             self.__class__._last = t
-            # TODO
+            bpy.ops.preferences.addon_disable(module=self.addon)
+            bpy.ops.preferences.addon_enable(module=self.addon)
             print(f"{datetime.now()} execute {self.addon}")
 
     def stop(self, context):
@@ -51,8 +53,12 @@ class CWF_OT_watch_addon(bpy.types.Operator):
         if context.area.type != "VIEW_3D":
             return {"CANCELLED"}
         if not self._timer:
-            pth = Path(__file__).parent / self.addon / "__init__.py"
-            if pth.exists():
+            pth = Path(__file__).parent.parent / self.addon / "__init__.py"
+            if not pth.exists():
+                print(f"Not found {pth}")
+                return {"CANCELLED"}
+            else:
+                run(["code", str(pth)])
                 self.__class__._path = pth
                 self.__class__._last = -1
                 self.off_on_addon()
