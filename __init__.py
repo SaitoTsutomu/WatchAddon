@@ -1,6 +1,6 @@
 from datetime import datetime
 from pathlib import Path
-from subprocess import run
+from subprocess import Popen
 
 import bpy
 
@@ -57,7 +57,7 @@ class CWF_OT_watch_addon(bpy.types.Operator):
                 print(f"Not found {pth}")
                 return {"CANCELLED"}
             else:
-                run(["code", str(pth)], shell=True)
+                Popen(f"code {pth.name}", shell=True, cwd=pth.parent)
                 self.__class__._path = pth
                 self.__class__._last = -1
                 self.off_on_addon()
