@@ -24,6 +24,7 @@ class CWF_OT_watch_addon(bpy.types.Operator):
     bl_description = "Re-activate addon when a file is modified."
 
     addon: bpy.props.StringProperty()  # type: ignore
+    _addon = ""
     _timer = None  # インスタンスが異なることがあるので、代入はクラスにすること
     _path = None  # インスタンスが異なることがあるので、代入はクラスにすること
     _last = None  # インスタンスが異なることがあるので、代入はクラスにすること
@@ -31,9 +32,9 @@ class CWF_OT_watch_addon(bpy.types.Operator):
     def off_on_addon(self):
         if (t := self._path.stat().st_mtime) > self._last:
             self.__class__._last = t
-            bpy.ops.preferences.addon_disable(module=self.addon)
-            bpy.ops.preferences.addon_enable(module=self.addon)
-            print(f"{datetime.now()} execute {self.addon}")
+            bpy.ops.preferences.addon_disable(module=self._addon)
+            bpy.ops.preferences.addon_enable(module=self._addon)
+            print(f"{datetime.now()} execute {self._addon}")
 
     def stop(self, context):
         if self._timer:
@@ -52,7 +53,11 @@ class CWF_OT_watch_addon(bpy.types.Operator):
         if context.area.type != "VIEW_3D":
             return {"CANCELLED"}
         if not self._timer:
-            pth = Path(__file__).parent.parent / self.addon / "__init__.py"
+            self._addon = self.addon
+            pth = Path(__file__).parent.parent / self._addon / "__init__.py"
+            if not pth.exists():
+                self._addon = self.addon + "-main"
+                pth = pth.parent.parent / self._addon / "__init__.py"
             if not pth.exists():
                 print(f"Not found {pth}")
                 return {"CANCELLED"}
