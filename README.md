@@ -4,7 +4,7 @@ Re-activate addon when a file is modified.
 
 ## Installation
 
-- Download https://github.com/SaitoTsutomu/WatchAddon/archive/refs/heads/main.zip
+- Download https://github.com/SaitoTsutomu/WatchAddon/archive/refs/heads/master.zip
 - Start Blender.
 - Edit menu -> Preferences
   - Select the "Add-ons" tab.

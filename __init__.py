@@ -56,6 +56,9 @@ class CWF_OT_watch_addon(bpy.types.Operator):
             self._addon = self.addon
             pth = Path(__file__).parent.parent / self._addon / "__init__.py"
             if not pth.exists():
+                self._addon = self.addon + "-master"
+                pth = pth.parent.parent / self._addon / "__init__.py"
+            if not pth.exists():
                 self._addon = self.addon + "-main"
                 pth = pth.parent.parent / self._addon / "__init__.py"
             if not pth.exists():
