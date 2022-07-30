@@ -66,7 +66,7 @@ class CWF_OT_watch_addon(bpy.types.Operator):
                 print(f"Not found {pth}")
                 return {"CANCELLED"}
             else:
-                Popen("code", shell=True, cwd=pth.parent)
+                Popen("code .", shell=True, cwd=pth.parent)
                 self.__class__._path = pth.parent
                 self.__class__._last = -1
                 self.off_on_addon()
