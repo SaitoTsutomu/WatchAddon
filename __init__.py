@@ -30,7 +30,8 @@ class CWF_OT_watch_addon(bpy.types.Operator):
     _last = None  # インスタンスが異なることがあるので、代入はクラスにすること
 
     def off_on_addon(self):
-        if (t := self._path.stat().st_mtime) > self._last:
+        t = max((f.stat().st_mtime for f in self._path.glob("*.py")), default=0)
+        if t > self._last:
             self.__class__._last = t
             bpy.ops.preferences.addon_disable(module=self._addon)
             bpy.ops.preferences.addon_enable(module=self._addon)
@@ -65,14 +66,15 @@ class CWF_OT_watch_addon(bpy.types.Operator):
                 print(f"Not found {pth}")
                 return {"CANCELLED"}
             else:
-                Popen(f"code {pth.name}", shell=True, cwd=pth.parent)
-                self.__class__._path = pth
+                Popen("code", shell=True, cwd=pth.parent)
+                self.__class__._path = pth.parent
                 self.__class__._last = -1
                 self.off_on_addon()
+                wm = context.window_manager
                 # タイマを登録
-                timer = context.window_manager.event_timer_add(1, window=context.window)
+                timer = wm.event_timer_add(1, window=context.window)
                 self.__class__._timer = timer
-                context.window_manager.modal_handler_add(self)
+                wm.modal_handler_add(self)
                 # モーダルモードへの移行
                 return {"RUNNING_MODAL"}
         self.stop(context)
@@ -91,7 +93,8 @@ class CWF_PT_watch_addon(bpy.types.Panel):
         text, icon = "Start", "PLAY"
         if CWF_OT_watch_addon._timer:
             text, icon = "Pause", "PAUSE"
-        prop = self.layout.operator(CWF_OT_watch_addon.bl_idname, text=text, icon=icon)
+        name = CWF_OT_watch_addon.bl_idname
+        prop = self.layout.operator(name, text=text, icon=icon)
         prop.addon = context.scene.addon
 
 
@@ -111,7 +114,3 @@ def unregister():
     for c in classes:
         bpy.utils.unregister_class(c)
     del bpy.types.Scene.addon
-
-
-if __name__ == "__main__":
-    register()
