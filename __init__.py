@@ -30,7 +30,8 @@ class CWF_OT_watch_addon(bpy.types.Operator):
     _last = None  # インスタンスが異なることがあるので、代入はクラスにすること
 
     def off_on_addon(self):
-        t = max((f.stat().st_mtime for f in self._path.glob("*.py")), default=0)
+        files = self._path.glob("*.py")
+        t = max((file.stat().st_mtime for file in files), default=0)
         if t > self._last:
             self.__class__._last = t
             bpy.ops.preferences.addon_disable(module=self._addon)
