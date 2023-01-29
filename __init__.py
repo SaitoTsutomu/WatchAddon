@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from pathlib import Path
 from subprocess import Popen
@@ -8,7 +9,7 @@ bl_info = {
     "name": "WatchAddon",
     "author": "tsutomu",
     "version": (0, 1),
-    "blender": (3, 1, 0),
+    "blender": (3, 4, 0),
     "support": "TESTING",
     "category": "Object",
     "description": "",
@@ -83,6 +84,20 @@ class CWF_OT_watch_addon(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class CWF_OT_open_github(bpy.types.Operator):
+    bl_idname = "object.open_github"
+    bl_label = "GitHub"
+    bl_description = "open GitHub with VS Code."
+
+    def execute(self, context):
+        pth = Path(f'{os.getenv("HOME")}/GitHub/{context.scene.addon}')
+        if not pth.is_dir():
+            print(f"Not found {pth}")
+            return {"CANCELLED"}
+        Popen("code .", shell=True, cwd=pth)
+        return {"FINISHED"}
+
+
 class CWF_PT_watch_addon(bpy.types.Panel):
     bl_label = "WatchAddon"
     bl_space_type = "VIEW_3D"
@@ -97,10 +112,12 @@ class CWF_PT_watch_addon(bpy.types.Panel):
         name = CWF_OT_watch_addon.bl_idname
         prop = self.layout.operator(name, text=text, icon=icon)
         prop.addon = context.scene.addon
+        self.layout.operator(CWF_OT_open_github.bl_idname)
 
 
 classes = [
     CWF_OT_watch_addon,
+    CWF_OT_open_github,
     CWF_PT_watch_addon,
 ]
 
